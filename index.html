@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>جدول الحصص الشهري</title>
+<style>
+body {
+  font-family: sans-serif; /* تحسين الخط */
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 8px; /* زيادة التباعد */
+  text-align: center;
+}
+th {
+    background-color: #f0f0f0; /* لون للخلايا الرأسية */
+}
+</style>
+</head>
+<body>
+
+<h1>جدول الحصص الشهري</h1>
+
+<div id="scheduleContainer">
+</div>
+
+<script>
+const scheduleData = [
+  { day: "السبت", lessons: ["عربي", "فيزياء", "دين"] },
+  { day: "الأحد", lessons: ["رياضة", "عربي", "فيزياء"] },
+  { day: "الاثنين", lessons: ["دين", "رياضة", "عربي"] },
+  { day: "الثلاثاء", lessons: ["فيزياء", "دين", "رياضة"] },
+  { day: "الأربعاء", lessons: ["عربي", "فيزياء", "دين"] },
+  { day: "الخميس", lessons: ["رياضة", "عربي", "فيزياء"] },
+  { day: "الجمعة", lessons: ["دين", "رياضة", "عربي"] }
+];
+
+const scheduleContainer = document.getElementById("scheduleContainer");
+
+for (let week = 1; week <= 4; week++) {
+  const weekTitle = document.createElement("h2");
+  weekTitle.textContent = `الأسبوع ${week}`;
+  scheduleContainer.appendChild(weekTitle);
+
+  const table = document.createElement("table");
+  const headerRow = table.insertRow();
+  headerRow.insertCell().textContent = "اليوم";
+  headerRow.insertCell().textContent = "المادة الأولى";
+  headerRow.insertCell().textContent = "المادة الثانية";
+  headerRow.insertCell().textContent = "المادة الثالثة";
+  headerRow.insertCell().textContent = "راحة";
+
+  scheduleData.forEach((dayData, dayIndex) => {
+    const row = table.insertRow();
+    row.insertCell().textContent = dayData.day;
+
+    dayData.lessons.forEach((lesson, lessonIndex) => {
+        const cell = row.insertCell();
+        const checkboxId = `week${week}-${dayData.day}-${lessonIndex + 1}`;
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = checkboxId;
+        checkbox.addEventListener('change', function() {
+          localStorage.setItem(checkboxId, checkbox.checked);
+        });
+        cell.textContent = lesson + " "; // مسافة بسيطة
+        cell.appendChild(checkbox);
+    });
+    const restCell = row.insertCell(); // خلية الراحة
+    const restCheckboxId = `week${week}-${dayData.day}-R`;
+    const restCheckbox = document.createElement('input');
+    restCheckbox.type = 'checkbox';
+    restCheckbox.id = restCheckboxId;
+    restCheckbox.addEventListener('change', () => {
+        localStorage.setItem(restCheckboxId, restCheckbox.checked);
+    });
+    restCell.appendChild(restCheckbox);
+
+  });
+
+  scheduleContainer.appendChild(table);
+}
+
+
+window.onload = function() {
+  for (let i = 0; i < localStorage.length; i++) {
+    let key = localStorage.key(i);
+    let element = document.getElementById(key);
+    if (element) {
+      element.checked = localStorage.getItem(key) === 'true';
+    }
+  }
+};
+</script>
+
+</body>
+</html>
